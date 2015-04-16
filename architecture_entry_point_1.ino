@@ -74,6 +74,8 @@ Libraries to download
 Aditional notes
 ---------------
 - Writing to the BTLESerial when nothing is connected appears to stall the program. Avoid doing that!
+- Sometimes the weight of the flicker arm causes the servo to make obnoxious noises when at rest. 
+  Try detaching it or cuttin power with a transistor.
 
 */
 
