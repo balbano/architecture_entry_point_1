@@ -70,6 +70,11 @@ Libraries to download
 - DS1307RTC https://github.com/PaulStoffregen/DS1307RTC
 - Time https://github.com/PaulStoffregen/Time
 - Adafruit_nRF8001 https://github.com/adafruit/Adafruit_nRF8001
+
+Aditional notes
+---------------
+- Writing to the BTLESerial when nothing is connected appears to stall the program. Avoid doing that!
+
 */
 
 //Servo includes
@@ -87,7 +92,7 @@ Libraries to download
 // Servo setup.
 Servo switch_flicker;
 const int rest_position = 150;
-const int switch_position = 115;
+const int switch_position = 112;
 const int servo_pin = 3;
 
 // Adafruit Bluefruit LE setup.
@@ -122,9 +127,9 @@ void setup() {
   while (!Serial) ; // wait until Arduino Serial Monitor opens
   setSyncProvider(RTC.get);   // the function to get the time from the RTC
   if(timeStatus()!= timeSet) 
-     Serial.println("Unable to sync with the RTC");
+     Serial.println(F("Unable to sync with the RTC"));
   else
-     Serial.println("RTC has set the system time");    
+     Serial.println(F("RTC has set the system time"));    
 }
 
 aci_evt_opcode_t laststatus = ACI_EVT_DISCONNECTED;
@@ -133,7 +138,6 @@ void loop() {
   // Check the alarm
   time_t current_time = now();
   if (time_to_flick(current_time)) {
-    BTLEserial.print("Good morning!\n");
     flick_switch();
     switch_last_flicked = current_time;
   }
@@ -169,38 +173,37 @@ void listen_for_command() {
     }
     else {
       if (message == "flick") {
-        BTLEserial.print("Good morning!\n");
         flick_switch();
       }
       else if (message == "time") {
-        BTLEserial.print("Current time: ");
+        BTLEserial.print(F("Current time: "));
         BTLEserial.print(time_to_string(now()).c_str());
-        BTLEserial.print("\n");
+        BTLEserial.print(F("\n"));
       }
       else if (message == "alarm") {
-        BTLEserial.print("Alarm set to: ");
+        BTLEserial.print(F("Alarm set to: "));
         BTLEserial.print(alarm_hour);
-        BTLEserial.print(":");
+        BTLEserial.print(F(":"));
         BTLEserial.print(alarm_minute);
-        BTLEserial.print("\n");
+        BTLEserial.print(F("\n"));
       }
       else if (message.length() == 8 
                && message.substring(0, 3) == "set"
                && is_all_digits(message.substring(4))) {
         alarm_hour = message.substring(4,6).toInt();
         alarm_minute = message.substring(6).toInt();
-        BTLEserial.print("Alarm set to: ");
+        BTLEserial.print(F("Alarm set to: "));
         BTLEserial.print(alarm_hour);
-        BTLEserial.print(":");
+        BTLEserial.print(F(":"));
         BTLEserial.print(alarm_minute);
-        BTLEserial.print("\n");
+        BTLEserial.print(F("\n"));
       }
       else {
-        BTLEserial.print("You typed: '");
+        BTLEserial.print(F("You typed: '"));
         BTLEserial.print(message);
-        BTLEserial.print("'\n");
-        BTLEserial.print("I don't know what that means.\n");
-        BTLEserial.print("Type 'set hhmm' to set the alarm.\n");
+        BTLEserial.print(F("'\n"));
+        BTLEserial.print(F("I don't know what that means.\n"));
+        BTLEserial.print(F("Type 'set hhmm' to set the alarm.\n"));
       }
 
       message = "";
