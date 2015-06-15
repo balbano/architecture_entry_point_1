@@ -109,7 +109,7 @@ Adafruit_BLE_UART BTLEserial = Adafruit_BLE_UART(ADAFRUITBLE_REQ, ADAFRUITBLE_RD
 // Holds the serial message.
 String message = "";
 int alarm_hour = 6;
-int alarm_minute = 30;
+int alarm_minute = 0;
 time_t switch_last_flicked = 0;
 
 void setup() {
