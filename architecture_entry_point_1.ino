@@ -114,8 +114,7 @@ time_t switch_last_flicked = 0;
 
 void setup() {
   // Servo setup.
-  switch_flicker.attach(servo_pin);
-  switch_flicker.write(rest_position);
+  go_to_rest_position();
   
   // Serial setup.
   Serial.begin(9600);
@@ -213,13 +212,24 @@ void listen_for_command() {
   }
 }
 
+void go_to_rest_position() {
+  switch_flicker.attach(servo_pin);
+  switch_flicker.write(rest_position);
+  delay(500);
+  // Keeping the servo pin detached while resting keeps the servo from buzzing obnoxiously.
+  switch_flicker.detach();
+}
+
 void flick_switch() {
+  switch_flicker.attach(servo_pin);
   switch_flicker.write(rest_position);
   delay(500);
   switch_flicker.write(switch_position);
   delay(500);
   switch_flicker.write(rest_position);
   delay(500);
+  // Keeping the servo pin detached while resting keeps the servo from buzzing obnoxiously.
+  switch_flicker.detach();
 }
 
 // Check to see if it is the alarm time and that the switch hasn't been flicked.
